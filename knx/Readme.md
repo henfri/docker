@@ -6,7 +6,11 @@ Mandatory files/folders:
 ./var  (logfiles etc)
 
 You can use the sample configuration from the github (sample_config/smarthomeconfig/etc/plugin.conf)
+Edit the name/IP of the knx-interface in ./etc/plugin.conf in the knx section
 If you use custom plugins, add them as shown in the example. Also you can pass devices from /dev/ to the container.
+
+## Configuration of KNXD
+Change the commandline of knxd in the docker-compose.yml to match your situation. If you use a USB device, adopt the configuration from OWFS (see below) do pass the Device into the container
 
 
 ## Configuration of OWFS
