@@ -1,3 +1,7 @@
+General remark:
+you can pull all images from docker-hub with the exception of smartvisudata
+Thus, from Git you only need docker-compose.yml, sampleconfig and the folder smartvisu/
+
 ## Configuration of Smarthome.py
 Create a folder to store your configuration files, e.g. /mnt2/RockOn_Configs/config/smarthomeconfig/
 Mandatory files/folders:
@@ -32,5 +36,9 @@ create a folder for your smartvisu configuration, e.g. /mnt2/RockOn_Configs/conf
 I am still using the old png Icons and store them in  ./smartvisuconfig/icons
 I also use the new google-calender plugin. So I pass it in ./smartvisuconfig/lib
 My pages are stored ./smartvisuconfig/pages/friedel. Adopt this to your path in the docker-compose.yml
-            
+
+
+## And start
+run docker-compose build && docker-compose up in the folder of docker-compose.yml
+
 You can reach Smartvisu at Dockerhost:8080
