@@ -7,27 +7,18 @@ smarthome:
   - /mnt2/RockOn_Configs/config/smarthomeconfig/scenes:/usr/local/smarthome/scenes
   - /mnt2/RockOn_Configs/config/smarthomeconfig/tools:/usr/local/smarthome/tools
   - /mnt2/RockOn_Configs/config/smarthomeconfig/var:/usr/local/smarthome/var
-  - /mnt2/RockOn_Configs/config/smarthomeconfig/plugins/ag980:/usr/local/smarthome/plugins/ag980
-  - /mnt2/RockOn_Configs/config/smarthomeconfig/plugins/logiceditor:/usr/local/smarthome/plugins/logiceditor
-  - /mnt2/RockOn_Configs/config/smarthomeconfig/plugins/lohberger:/usr/local/smarthome/plugins/lohberger
-  - /mnt2/RockOn_Configs/config/smarthomeconfig/plugins/uzsu:/usr/local/smarthome/plugins/uzsu
-  - /mnt2/RockOn_Configs/config/smarthomeconfig/plugins/whatsapp:/usr/local/smarthome/plugins/whatsapp
-  - /mnt2/RockOn_Configs/config/smarthomeconfig/plugins/denon:/usr/local/smarthome/plugins/denon
-  - /mnt2/RockOn_Configs/config/smarthomeconfig/plugins/wol:/usr/local/smarthome/plugins/wol
-  - /mnt2/RockOn_Configs/config/smarthomeconfig/plugins/speech:/usr/local/smarthome/plugins/speech
-  - /dev/Lohberger:/dev/Lohberger
-  - /dev/TEAC:/dev/TEAC
+#  - /mnt2/RockOn_Configs/config/smarthomeconfig/plugins/denon:/usr/local/smarthome/plugins/denon
+#  - /dev/ttyUSB:/dev/ttyUSB
   privileged: true
   ports: 
   - "2323:2323"
   - "2424:2424"
   - "2788:2788"  
   links: 
-#   - "knxd"
+   - "knxd"
    - "owfs"
    - "smartvisu"
   command: /usr/local/bin/run.sh
-#  command: bash
   restart: always
   
   
