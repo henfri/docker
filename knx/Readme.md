@@ -33,3 +33,4 @@ I am still using the old png Icons and store them in  ./smartvisuconfig/icons
 I also use the new google-calender plugin. So I pass it in ./smartvisuconfig/lib
 My pages are stored ./smartvisuconfig/pages/friedel. Adopt this to your path in the docker-compose.yml
             
+You can reach Smartvisu at Dockerhost:8080
