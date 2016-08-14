@@ -10,7 +10,7 @@ smarthome-ng:
   - /mnt2/Docker_configs//config/smarthomeNGconfig/var:/usr/local/smarthome/var
 # example for user provided plugin
 # uncomment next line
-  - /mnt2/Docker_configs//config/smarthomeNGconfig/plugins/influxdb:/usr/local/smarthome/plugins/influxdb
+  - /mnt2/Docker_configs//config/smarthomeNGconfig/plugins/influx:/usr/local/smarthome/plugins/influx
 # example for devide to be passed
 #  - /dev/TEAC:/dev/TEAC
   privileged: true

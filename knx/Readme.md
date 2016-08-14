@@ -51,6 +51,7 @@ e.g.
 ``` 
 cd /mnt2/Docker_Configs/config/smarthomeNGconfig/plugins/
 git clone https://github.com/SgtSeppel/influxdb.git
+mv influxdb influx
 ```
 
 Also you can pass devices from /dev/ to the container.
