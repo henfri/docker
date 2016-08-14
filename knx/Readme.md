@@ -45,10 +45,11 @@ Mandatory files/folders:
 You can use the sample configuration from the github (config/smarthomeconfig/etc/plugin.conf)
 Edit the name/IP of the knx-interface in ./etc/plugin.conf in the knx section
 If you use custom plugins, add them as shown in the example. 
-e.g. 
+e.g.
+``` 
 cd /mnt2/Docker_Configs/config/smarthomeNGconfig/plugins/
 git clone https://github.com/SgtSeppel/influxdb.git
-
+```
 
 Also you can pass devices from /dev/ to the container.
 
