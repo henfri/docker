@@ -1,61 +1,75 @@
-smarthome:
-  build: smarthome/.
+smarthome-ng:
+#  build: smarthome-ng/.
+  image: henfri/smarthome-ng
   volumes:
-  - /mnt2/RockOn_Configs/config/smarthomeconfig/etc:/usr/local/smarthome/etc
-  - /mnt2/RockOn_Configs/config/smarthomeconfig/items:/usr/local/smarthome/items
-  - /mnt2/RockOn_Configs/config/smarthomeconfig/logics:/usr/local/smarthome/logics
-  - /mnt2/RockOn_Configs/config/smarthomeconfig/scenes:/usr/local/smarthome/scenes
-  - /mnt2/RockOn_Configs/config/smarthomeconfig/tools:/usr/local/smarthome/tools
-  - /mnt2/RockOn_Configs/config/smarthomeconfig/var:/usr/local/smarthome/var
-#  - /mnt2/RockOn_Configs/config/smarthomeconfig/plugins/denon:/usr/local/smarthome/plugins/denon
-#  - /dev/ttyUSB:/dev/ttyUSB
+  - /mnt2/Dokumente/Hendrik/docker_smarthome/config/smarthomeNGconfig/etc:/usr/local/smarthome/etc
+  - /mnt2/Dokumente/Hendrik/docker_smarthome/config/smarthomeNGconfig/items:/usr/local/smarthome/items
+  - /mnt2/Dokumente/Hendrik/docker_smarthome/config/smarthomeNGconfig/logics:/usr/local/smarthome/logics
+  - /mnt2/Dokumente/Hendrik/docker_smarthome/config/smarthomeNGconfig/scenes:/usr/local/smarthome/scenes
+  - /mnt2/Dokumente/Hendrik/docker_smarthome/config/smarthomeNGconfig/tools:/usr/local/smarthome/tools
+  - /mnt2/Dokumente/Hendrik/docker_smarthome/config/smarthomeNGconfig/var:/usr/local/smarthome/var
+# example for user provided plugin
+# uncomment next line
+#  - /mnt2/Dokumente/Hendrik/docker_smarthome/config/smarthomeNGconfig/plugins/whatsapp:/usr/local/smarthome/plugins/whatsapp
+# example for devide to be passed
+#  - /dev/TEAC:/dev/TEAC
   privileged: true
   ports: 
   - "2323:2323"
   - "2424:2424"
   - "2788:2788"  
+  - "8383:8383"
   links: 
-   - "knxd"
    - "owfs"
    - "smartvisu"
-  command: /usr/local/bin/run.sh
+   - "grafana"
+   - "influxdb"
+  command: "/usr/local/bin/run.sh"
   restart: always
+
+
   
   
 knxd:
-  build: ./knxd/.
-#  ports: 
-#  - "4720:4720"
-#  - "6720:6720"
-#  - "3671/udp:3671/udp"
+  image: henfri/knxd
   net: "host"
-  command: knxd -t 65535 -e=0.0.2 -D -T -R -S -i --GroupCache -b ipt:192.168.177.24
+  command: knxd --error=0 -D -T -R -S -i --GroupCache --no-tunnel-client-queuing -b ipt:192.168.177.24
   restart: always
 
 
 owfs:
-  build: ./owfs/.
+  image: henfri/owfs
   volumes:
   - /dev/PBM:/dev/PBM
-  command: /usr/sbin/owserver -p 0.0.0.0:4304 -uall -uscan --foreground --pbm=/dev/PBM 
-#  ports:
-#  - "4304:4304"
-#  command: /usr/bin/supervisord
+  command: /usr/sbin/owserver -p 0.0.0.0:4304 -uall -uscan --foreground --error_level==0 --error_print=1 --pbm=/dev/PBM 
   restart: always
   privileged: true
 
 
-smartvisu_data:
-  build: ./smartvisu/.
 
 smartvisu:
   image: richarvey/nginx-php-fpm
-  volumes_from:
-  - smartvisu_data
   volumes:
-  - /mnt2/RockOn_Configs/config/smartvisuconfig/icons:/copy/icons
-  - /mnt2/RockOn_Configs/config/smartvisuconfig/lib:/copy/lib
-  - /mnt2/RockOn_Configs/config/smartvisuconfig/pages/friedel/:/copy/pages/friedel
+  - /mnt2/Dokumente/Hendrik/docker_smarthome/config/smartvisu/:/var/www/html
   ports: 
   - 8080:80
-  command: ["/bin/bash", "-c", "cp -R /copy/* /usr/share/nginx/html/ ;  /start.sh"]
+  restart: always
+influxdb:
+  image: influxdb:latest
+  volumes:
+  - /mnt2/RockOn_Configs/config/influxdb/:/var/lib/influxdb
+  ports: 
+  - 8083:8083
+  - 8086:8086
+  - 8090:8090
+  restart: always
+
+grafana:
+  image: grafana/grafana:latest
+  volumes:
+  - /mnt2/RockOn_Configs/config/grafana/:/var/lib/grafana
+  ports: 
+  - 3000:3000
+  restart: always
+  links:
+  - influxdb
