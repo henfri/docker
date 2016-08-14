@@ -2,15 +2,15 @@ smarthome-ng:
 #  build: smarthome-ng/.
   image: henfri/smarthome-ng
   volumes:
-  - /mnt2/Dokumente/Hendrik/docker_smarthome/config/smarthomeNGconfig/etc:/usr/local/smarthome/etc
-  - /mnt2/Dokumente/Hendrik/docker_smarthome/config/smarthomeNGconfig/items:/usr/local/smarthome/items
-  - /mnt2/Dokumente/Hendrik/docker_smarthome/config/smarthomeNGconfig/logics:/usr/local/smarthome/logics
-  - /mnt2/Dokumente/Hendrik/docker_smarthome/config/smarthomeNGconfig/scenes:/usr/local/smarthome/scenes
-  - /mnt2/Dokumente/Hendrik/docker_smarthome/config/smarthomeNGconfig/tools:/usr/local/smarthome/tools
-  - /mnt2/Dokumente/Hendrik/docker_smarthome/config/smarthomeNGconfig/var:/usr/local/smarthome/var
+  - /mnt2/Docker_configs//config/smarthomeNGconfig/etc:/usr/local/smarthome/etc
+  - /mnt2/Docker_configs//config/smarthomeNGconfig/items:/usr/local/smarthome/items
+  - /mnt2/Docker_configs//config/smarthomeNGconfig/logics:/usr/local/smarthome/logics
+  - /mnt2/Docker_configs//config/smarthomeNGconfig/scenes:/usr/local/smarthome/scenes
+  - /mnt2/Docker_configs//config/smarthomeNGconfig/tools:/usr/local/smarthome/tools
+  - /mnt2/Docker_configs//config/smarthomeNGconfig/var:/usr/local/smarthome/var
 # example for user provided plugin
 # uncomment next line
-#  - /mnt2/Dokumente/Hendrik/docker_smarthome/config/smarthomeNGconfig/plugins/whatsapp:/usr/local/smarthome/plugins/whatsapp
+  - /mnt2/Docker_configs//config/smarthomeNGconfig/plugins/influxdb:/usr/local/smarthome/plugins/influxdb
 # example for devide to be passed
 #  - /dev/TEAC:/dev/TEAC
   privileged: true
@@ -50,10 +50,11 @@ owfs:
 smartvisu:
   image: richarvey/nginx-php-fpm
   volumes:
-  - /mnt2/Dokumente/Hendrik/docker_smarthome/config/smartvisu/:/var/www/html
+  - /mnt2/Docker_configs//config/smartvisu/:/var/www/html
   ports: 
   - 8080:80
   restart: always
+
 influxdb:
   image: influxdb:latest
   volumes:
