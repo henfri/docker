@@ -1,47 +1,78 @@
-smarthome-ng:
-#  build: smarthome-ng/.
-  image: henfri/smarthome-ng
+smarthome-ng-dev:
+#  build: smarthome-ng-dev/.
+  image: henfri/smarthome-ng-dev:latest
   volumes:
-  - /mnt2/Docker_configs//config/smarthomeNGconfig/etc:/usr/local/smarthome/etc
-  - /mnt2/Docker_configs//config/smarthomeNGconfig/items:/usr/local/smarthome/items
-  - /mnt2/Docker_configs//config/smarthomeNGconfig/logics:/usr/local/smarthome/logics
-  - /mnt2/Docker_configs//config/smarthomeNGconfig/scenes:/usr/local/smarthome/scenes
-  - /mnt2/Docker_configs//config/smarthomeNGconfig/tools:/usr/local/smarthome/tools
-  - /mnt2/Docker_configs//config/smarthomeNGconfig/var:/usr/local/smarthome/var
-# example for user provided plugin
-# uncomment next line
-  - /mnt2/Docker_configs//config/smarthomeNGconfig/plugins/influx:/usr/local/smarthome/plugins/influx
-# example for devide to be passed
-#  - /dev/TEAC:/dev/TEAC
+   - /srv/Daten/dockerconfig/knx/smarthomeNGconfig/etc:/usr/local/smarthome/etc
+   - /srv/Daten/dockerconfig/knx/smarthomeNGconfig/items:/usr/local/smarthome/items
+   - /srv/Daten/dockerconfig/knx/smarthomeNGconfig/logics:/usr/local/smarthome/logics
+   - /srv/Daten/dockerconfig/knx/smarthomeNGconfig/scenes:/usr/local/smarthome/scenes
+   - /srv/Daten/dockerconfig/knx/smarthomeNGconfig/tools:/usr/local/smarthome/tools
+   - /srv/Daten/dockerconfig/knx/smarthomeNGconfig/var:/usr/local/smarthome/var
+   - /srv/Daten/dockerconfig/knx/smarthomeNGconfig/plugins/ag980:/usr/local/smarthome/plugins/ag980
+   - /srv/Daten/dockerconfig/knx/smarthomeNGconfig/plugins/logiceditor:/usr/local/smarthome/plugins/logiceditor
+   - /srv/Daten/dockerconfig/knx/smarthomeNGconfig/plugins/lohberger:/usr/local/smarthome/plugins/lohberger
+   - /srv/Daten/dockerconfig/knx/smarthomeNGconfig/plugins/uzsu:/usr/local/smarthome/plugins/uzsu
+   - /srv/Daten/dockerconfig/knx/smarthomeNGconfig/plugins/whatsapp:/usr/local/smarthome/plugins/whatsapp
+   - /srv/Daten/dockerconfig/knx/smarthomeNGconfig/plugins/denon:/usr/local/smarthome/plugins/denon
+   - /srv/Daten/dockerconfig/knx/smarthomeNGconfig/plugins/wol:/usr/local/smarthome/plugins/wol
+   - /srv/Daten/dockerconfig/knx/smarthomeNGconfig/plugins/speech:/usr/local/smarthome/plugins/speech
+   - /srv/Daten/dockerconfig/knx/smarthomeNGconfig/plugins/influx:/usr/local/smarthome/plugins/influx
+   - /srv/Daten/dockerconfig/knx/smarthomeNGconfig/plugins/alexa:/usr/local/smarthome/plugins/alexa
+   - /srv/Daten/dockerconfig/knx/smarthomeNGconfig/plugins/chromecast:/usr/local/smarthome/plugins/chromecast
+   - /srv/Daten/dockerconfig/knx/smarthomeNGconfig/plugins/IpythonServer:/usr/local/smarthome/plugins/IpythonServer
+   - /dev/Lohberger:/dev/Lohberger
+   - /dev/ttyUSB1:/dev/ttyUSB1
   privileged: true
-  ports: 
-  - "2323:2323"
-  - "2424:2424"
-  - "2788:2788"  
-  - "8383:8383"
-  links: 
-   - "owfs"
-   - "smartvisu"
-   - "grafana"
-   - "influxdb"
+#  ports: 
+#  - "2323:2323"
+#  - "2424:2424"
+#  - "2788:2788"
+#  - "8383:8383"
+#  - "9010:9010"
+##  - "1900:1900"
+##  - "1900:1900/udp"
+#  links: 
+##   - "knxd"
+#   - "owfs"
+#   - "smartvisu"
+#   - "grafana"
+#   - "influxdb"
+  net: "host"
   command: "/usr/local/bin/run.sh"
+#  command: "/usr/local/smarthome/bin/smarthome.py"
+#  command: bash
   restart: always
 
 
   
   
 knxd:
-  image: henfri/knxd
+#  build: ./knxd/.
+  image: henfri/knxd:v0.12.6
+#  ports: 
+#  - "4720:4720"
+#  - "6720:6720"
+#  - "3671/udp:3671/udp"
   net: "host"
-  command: knxd --error=0 -D -T -R -S -i --GroupCache --no-tunnel-client-queuing -b ipt:192.168.177.24
+#  command: knxd -t 65535 -e=1.0.217 -D -T -R -S -i --GroupCache -b ipt:192.168.177.24
+#  command: knxd --error=0  -t 65535 -e=1.0.216 -D -T -R -S -i --GroupCache --no-tunnel-client-queuing -b ipt:192.168.177.24
+#  command: knxd --error=0 -D -T -R -S -i --GroupCache --no-tunnel-client-queuing -b ipt:192.168.177.24
+  command: knxd -e 0.0.1 -E 0.0.2:8 -DTRS -c -i --send-delay=120 -B single -b ipt:192.168.177.24
   restart: always
 
 
 owfs:
+#  build: ./owfs/.
   image: henfri/owfs
-  volumes:
+  devices:
   - /dev/PBM:/dev/PBM
-  command: /usr/sbin/owserver -p 0.0.0.0:4304 -uall -uscan --foreground --error_level==0 --error_print=1 --pbm=/dev/PBM 
+  - /dev/ttyUSB0:/dev/ttyUSB0
+#  command: /usr/sbin/owserver -p 0.0.0.0:4304 --pbm=/dev/ttyUSB0 --error_level=0 --error_print=2 --foreground > /dev/null 2>&1 #/dev/PBM  -uall -uscan  
+  command: /bin/sh -c "/usr/sbin/owserver -p 0.0.0.0:4304 --pbm=/dev/ttyUSB0 & while true;  do sleep 120; done"
+ 
+  ports:
+  - "4304:4304"
+#  command: /usr/bin/supervisord
   restart: always
   privileged: true
 
@@ -49,28 +80,48 @@ owfs:
 
 smartvisu:
   image: richarvey/nginx-php-fpm
+#  image: henfri/smartvisu
   volumes:
-  - /mnt2/Docker_configs//config/smartvisu/:/var/www/html
+   - /srv/Daten/dockerconfig/knx/smartvisu2.8/:/var/www/html
   ports: 
-  - 8080:80
+   - 8080:80
   restart: always
 
 influxdb:
   image: influxdb:latest
   volumes:
-  - /mnt2/RockOn_Configs/config/influxdb/:/var/lib/influxdb
+   - /srv/Daten/dockerconfig/knx/influxdb/:/var/lib/influxdb
   ports: 
-  - 8083:8083
-  - 8086:8086
-  - 8090:8090
+   - 8083:8083
+   - 8086:8086
+   - 8090:8090
   restart: always
 
 grafana:
   image: grafana/grafana:latest
   volumes:
-  - /mnt2/RockOn_Configs/config/grafana/:/var/lib/grafana
+   - /srv/Daten/dockerconfig/knx/grafana/:/var/lib/grafana
   ports: 
-  - 3000:3000
+   - 3000:3000
   restart: always
   links:
-  - influxdb
+   - influxdb
+
+
+openhab:
+  image: "openhab/openhab:2.0.0-amd64"
+  restart: always
+  net: host
+  volumes:
+    - "/etc/localtime:/etc/localtime:ro"
+    - "/etc/timezone:/etc/timezone:ro"
+    - "/srv/Daten/dockerconfig/knx/openhab/userdata:/openhab/userdata"
+    - "/srv/Daten/dockerconfig/knx/openhab/conf:/openhab/conf"
+  environment:
+    OPENHAB_HTTP_PORT: "8082"
+    OPNEHAB_HTTPS_PORT: "8444"
+#  ports: 
+#   - 8082:8080
+#   - 8444:8443
+  command: server
+#  user: "997"
