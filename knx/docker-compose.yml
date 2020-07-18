@@ -1,0 +1,110 @@
+version: "2"
+services:
+    smarthome-ng:
+    #  build: smarthome-ng/.
+      image: henfri/smarthome-ng:v1.7.2
+      volumes:
+       - /srv/Daten/dockerconfig/knx/smarthomeNGconfig/etc:/usr/local/smarthome/etc
+       - /srv/Daten/dockerconfig/knx/smarthomeNGconfig/items:/usr/local/smarthome/items
+       - /srv/Daten/dockerconfig/knx/smarthomeNGconfig/logics:/usr/local/smarthome/logics
+       - /srv/Daten/dockerconfig/knx/smarthomeNGconfig/scenes:/usr/local/smarthome/scenes
+       - /srv/Daten/dockerconfig/knx/smarthomeNGconfig/tools:/usr/local/smarthome/tools
+       - /srv/Daten/dockerconfig/knx/smarthomeNGconfig/var:/usr/local/smarthome/var
+       - /srv/Daten/dockerconfig/knx/smartvisu2.9:/var/www/html
+       - /dev/ttyUSB1:/dev/ttyUSB1
+       - /dev/bus/usb:/dev/bus/usb
+
+      privileged: true
+    #  ports: 
+    #  - "2323:2323"
+    #  - "2424:2424"
+    #  - "2788:2788"
+    #  - "8383:8383"
+    #  - "9010:9010"
+    ##  - "1900:1900"
+    ##  - "1900:1900/udp"
+      network_mode: "host"
+      command: "--interactive"
+      restart: always
+      depends_on:
+       - "influxdb"
+
+      
+      
+    knxd:
+      image: henfri/knxd:v0.12.6
+      network_mode: "host"
+    #  command: knxd -t 65535 -e=1.0.217 -D -T -R -S -i --GroupCache -b ipt:192.168.177.24
+    #  command: knxd --error=0  -t 65535 -e=1.0.216 -D -T -R -S -i --GroupCache --no-tunnel-client-queuing -b ipt:192.168.177.24
+    #  command: knxd --error=0 -D -T -R -S -i --GroupCache --no-tunnel-client-queuing -b ipt:192.168.177.24
+      command: knxd -e 1.0.200 -E 1.0.201:8 -DTRS -c -i --send-delay=120 -B single -b ipt:192.168.177.8
+      restart: always
+
+
+    #owfs:
+    ##  build: ./owfs/.
+    #  image: henfri/owfs
+    #  devices:
+    #  - /dev/PBM:/dev/PBM
+    #  - /dev/ttyUSB0:/dev/ttyUSB0
+    #  command: /usr/sbin/owserver -p 0.0.0.0:4304 --pbm=/dev/ttyUSB0 --error_level=0 --error_print=2 --foreground > /dev/null 2>&1 #/dev/PBM  -uall -uscan  
+    ##  command: /bin/sh -c "/usr/sbin/owserver -p 0.0.0.0:4304 --pbm=/dev/ttyUSB0 & while true;  do sleep 120; done" 
+    #  ports:
+    #  - "4304:4304"
+    ##  command: /usr/bin/supervisord
+    ##  restart: always
+    #  privileged: true
+
+
+
+    smartvisu:
+      image: richarvey/nginx-php-fpm
+    #  image: henfri/smartvisu
+      volumes:
+       - /srv/Daten/dockerconfig/knx/smartvisu2.8/:/var/www/html
+      ports: 
+       - 8084:80
+      restart: always
+
+    smartvisu_dev:
+      image: richarvey/nginx-php-fpm
+    #  image: henfri/smartvisu
+      volumes:
+       - /srv/Daten/dockerconfig/knx/smartvisu2.9/:/var/www/html
+      ports: 
+       - 8085:80
+      restart: always
+      environment:
+       PUID: 1000
+       PGID: 1000
+
+
+    influxdb:
+      image: influxdb:latest
+      volumes:
+       - /srv/Daten/dockerconfig/knx/influxdb/:/var/lib/influxdb
+      ports: 
+       - 8083:8083
+       - 8086:8086
+       - 8089:8089/udp
+       - 8090:8090
+       - 25826:25826
+      restart: always
+      environment:
+       - INFLUXDB_UDP_ENABLED=true
+      command: influxd --config /var/lib/influxdb/influxdb.conf
+
+    grafana:
+      image: grafana/grafana:latest
+      volumes:
+       - /srv/Daten/dockerconfig/knx/grafana/:/var/lib/grafana
+      ports: 
+       - 3000:3000
+      restart: always
+      environment:
+       - GF_SMTP_ENABLED=true
+       - GF_SMTP_HOST=sslout.df.eu:465
+       - GF_SMTP_USER=homeserver@friedels.name
+       - GF_SMTP_PASSWORD=sdfdflkjlji4klj444
+      links:
+       - influxdb
