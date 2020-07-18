@@ -2,6 +2,11 @@ General remark:
 you can pull all images from docker-hub with the exception of smartvisudata
 Thus, from Git you only need docker-compose.yml, sampleconfig and the folder smartvisu/
 
+Requirements: 
+Docker and Docker Compose:
+https://docs.docker.com/engine/installation/
+https://docs.docker.com/compose/install/
+
 ## Configuration of Smarthome.py
 Create a folder to store your configuration files, e.g. /mnt2/RockOn_Configs/config/smarthomeconfig/
 Mandatory files/folders:
